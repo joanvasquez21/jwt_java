@@ -51,6 +51,30 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+
+		<!-- Dependencia para Hibernate (Implementación de JPA) -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>6.0.0.Final</version>
+		</dependency>
+
+		<!-- Dependencia para trabajar con MySQL (si estás usando MySQL como base de datos) -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
+		</dependency>
+
+		<!-- Dependencia para Spring Data JPA (si estás usando Spring Boot) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
