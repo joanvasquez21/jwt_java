@@ -32,26 +32,38 @@ public class UserServiceImpl implements UserService{
     public List<User> findAll() {
         return (List<User>)userRepository.findAll();
     }
-
     @Override
     @Transactional
     public User save(User user) {
-
-        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
-
+        System.out.println("Guardando usuario: " + user.getUsername());
+    
+        Optional<Role> optionalRoleUser = roleRepository.findByName("usuario");
         List<Role> roles = new ArrayList<>();
+    
+        if (optionalRoleUser.isPresent()) {
+            roles.add(optionalRoleUser.get());
+            System.out.println("Rol 'usuario' asignado");
+        } else {
+            System.out.println("Rol 'usuario' no encontrado");
+        }
 
-        optionalRoleUser.ifPresent(role -> roles.add(role));
-
-        if(user.isAdmin()){
-            Optional<Role> optionalRoleAdmin = roleRepository.findByName("ROLE_ADMIN");
-            optionalRoleAdmin.ifPresent(role -> roles.add(role));
+        if (user.isAdmin()) {
+            Optional<Role> optionalRoleAdmin = roleRepository.findByName("admin");
+            if (optionalRoleAdmin.isPresent()) {
+                roles.add(optionalRoleAdmin.get());
+                System.out.println("Rol 'admin' asignado");
+            } else {
+                System.out.println("Rol 'admin' no encontrado");
+            }
         }
 
         user.setRoles(roles);
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-
-        return userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
+    
+        User savedUser = userRepository.save(user);
+        System.out.println("Usuario guardado con ID: " + savedUser.getId() + " y roles: " + savedUser.getRoles());
+    
+        return savedUser;
     }
 }
