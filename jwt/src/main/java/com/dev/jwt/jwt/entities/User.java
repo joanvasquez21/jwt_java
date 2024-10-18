@@ -46,9 +46,12 @@ public class User {
 
     private boolean enabled;
 
+    @PrePersist
+    public void PrePersist(){
+        enabled = true;
+    }
     @Transient
     private boolean admin;
-
 
     public Long getId() {
         return id;
