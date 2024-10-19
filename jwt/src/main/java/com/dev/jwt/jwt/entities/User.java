@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
@@ -32,7 +33,6 @@ public class User {
     private String username;
 
     @NotBlank
-    @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ManyToMany
@@ -46,12 +46,17 @@ public class User {
 
     private boolean enabled;
 
+    @Transient
+    @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+    private boolean admin;
+
+    
+
     @PrePersist
-    public void PrePersist(){
+    public void prePersist(){
         enabled = true;
     }
-    @Transient
-    private boolean admin;
+
 
     public Long getId() {
         return id;

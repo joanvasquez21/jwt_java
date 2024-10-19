@@ -22,30 +22,41 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @Autowired
     private UserService userService;
 
     @GetMapping
-    public List<User> list(){
+    public List<User> list() {
         return userService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){
-        if(result.hasFieldErrors()){
+    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasFieldErrors()) {
             return validation(result);
         }
-        User savedUser = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
 
-      private ResponseEntity<?> validation(BindingResult result) {
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasFieldErrors()) {
+            return validation(result);
+        }
+        user.setAdmin(false);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+    }
+
+
+
+    private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
 
-      result.getFieldErrors().forEach(err ->{
-        errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
-      });
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
+        });
         return ResponseEntity.badRequest().body(errors);
     }
 
