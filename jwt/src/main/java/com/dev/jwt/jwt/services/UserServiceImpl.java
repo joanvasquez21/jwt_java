@@ -36,15 +36,18 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public User save(User user) {
         System.out.println("Guardando usuario: " + user.getUsername());
-    
-        Optional<Role> optionalRoleUser = roleRepository.findByName("usuario");
+
         List<Role> roles = new ArrayList<>();
-    
+
+        Optional<Role> optionalRoleUser = roleRepository.findByName("usuario");
         if (optionalRoleUser.isPresent()) {
             roles.add(optionalRoleUser.get());
             System.out.println("Rol 'usuario' asignado");
         } else {
-            System.out.println("Rol 'usuario' no encontrado");
+            Role newRoleUser = new Role("usuario");
+            roleRepository.save(newRoleUser);
+            roles.add(newRoleUser);
+            System.out.println("Rol 'usuario' creado");
         }
 
         if (user.isAdmin()) {
@@ -53,17 +56,20 @@ public class UserServiceImpl implements UserService{
                 roles.add(optionalRoleAdmin.get());
                 System.out.println("Rol 'admin' asignado");
             } else {
-                System.out.println("Rol 'admin' no encontrado");
+                Role newRoleAdmin = new Role("admin");
+                roleRepository.save(newRoleAdmin);
+                roles.add(newRoleAdmin);
+                System.out.println("Rol 'admin' creado");
             }
         }
 
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
-    
+
         User savedUser = userRepository.save(user);
         System.out.println("Usuario guardado con ID: " + savedUser.getId() + " y roles: " + savedUser.getRoles());
-    
+
         return savedUser;
     }
 }

@@ -1,5 +1,8 @@
 package com.dev.jwt.jwt.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,11 +21,14 @@ public class Role {
     @Column(unique = true)
     private String name;
 
-    public Role(String name) {
-        this.name = name; 
+    private List<User> users;
+
+    public Role(){
+        this.users = new ArrayList<>();
     }
 
-    public Role() {
+    public Role(String name) {
+        this.name = name; 
     }
 
     public Long getId() {
