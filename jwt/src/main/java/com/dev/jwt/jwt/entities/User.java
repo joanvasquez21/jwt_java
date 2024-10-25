@@ -3,6 +3,7 @@ package com.dev.jwt.jwt.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dev.jwt.jwt.validation.ExistsByUsername;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,29 +25,29 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true)
-    @NotBlank
-    @Size(min=4, max=20)
+    @ExistsByUsername(message = "El usuario ya existe")
+    @Column(unique = true)
+    @NotBlank(message = "El campo username no puede estar vacío")
+    @Size(min = 4, max = 20, message = "El username debe tener entre 4 y 20 caracteres")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "El campo password no puede estar vacío")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
     @JsonIgnoreProperties({"users", "handler", "hibernateLazyInitializer"})
     @ManyToMany
     @JoinTable(
-        name="users_roles",
-        joinColumns=@JoinColumn(name="user_id"),
-        inverseJoinColumns =  @JoinColumn(name="role_id"),
-        uniqueConstraints={@UniqueConstraint(columnNames={"user_id", "role_id"})}
-        )
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"),
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})}
+    )
     private List<Role> roles;
-
 
     public User() {
         roles = new ArrayList<>();
@@ -55,12 +56,11 @@ public class User {
     private boolean enabled;
 
     @Transient
-    @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean admin;
 
-
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         enabled = true;
     }
 

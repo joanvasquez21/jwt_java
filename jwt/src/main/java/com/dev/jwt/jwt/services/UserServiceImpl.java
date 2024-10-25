@@ -32,9 +32,19 @@ public class UserServiceImpl implements UserService{
     public List<User> findAll() {
         return (List<User>)userRepository.findAll();
     }
+ 
+
     @Override
     @Transactional
     public User save(User user) {
+        // Verificar si los campos username y password son válidos
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("El campo username no puede estar vacío");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("El campo password no puede estar vacío");
+        }
+
         System.out.println("Guardando usuario: " + user.getUsername());
 
         List<Role> roles = new ArrayList<>();
@@ -71,5 +81,12 @@ public class UserServiceImpl implements UserService{
         System.out.println("Usuario guardado con ID: " + savedUser.getId() + " y roles: " + savedUser.getRoles());
 
         return savedUser;
+    }
+
+
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
@@ -33,31 +37,36 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
-        if (result.hasFieldErrors()) {
+        if (result.hasErrors()) {
             return validation(result);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
-
-
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
-        if (result.hasFieldErrors()) {
-            return validation(result);
+    public ResponseEntity<String> register(@RequestBody User user) {
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            return ResponseEntity.badRequest().body("El campo username no puede estar vacío");
         }
-        user.setAdmin(false);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("El campo password no puede estar vacío");
+        }
+        userService.save(user);
+        return ResponseEntity.ok("Usuario registrado exitosamente");
     }
-
-
-
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
-
+    
+        // Captura de errores
         result.getFieldErrors().forEach(err -> {
             errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
         });
-        return ResponseEntity.badRequest().body(errors);
+    
+        // Asegúrate de que errores se devuelven correctamente
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return ResponseEntity.ok("Sin errores de validación"); // Para depuración
     }
+
 
 }
