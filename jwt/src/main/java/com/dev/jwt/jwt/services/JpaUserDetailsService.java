@@ -11,11 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.jwt.jwt.entities.User;
 import com.dev.jwt.jwt.repositories.UserRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class JpaUserDetailsService implements UserDetailsService{
@@ -26,17 +26,26 @@ public class JpaUserDetailsService implements UserDetailsService{
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Optional<User> userOptional = userRepository.findByUsername(username);
+
         if(userOptional.isEmpty()) {
             throw new UsernameNotFoundException(String.format("username %s not exist in db", username)) ;
         }
 
         User user = userOptional.orElseThrow();
+
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                    .map(role -> {
-                        new SimpleGrantedAuthority(role.getRoles)))
-                        .collect(Collectors.toList());
-                    })
+                 .map(role -> new SimpleGrantedAuthority( role.getName()) )
+                 .collect(Collectors.toList());
+                 return new org.springframework.security.core.userdetails.User(
+                  user.getUsername(),
+                  user.getPassword(), 
+                  user.isEnabled(),
+                  true,
+                  true,
+                  true,
+                  authorities);
     }
     
 }
