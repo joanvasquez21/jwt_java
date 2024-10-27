@@ -47,15 +47,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                //se crea un username.... con el nombre del username y el password
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+                //llama a authenticate para verificar las credenciales
                 return authenticationManager.authenticate(authenticationToken);
-
-
     }
-
-    
-
-    
-    
 }
