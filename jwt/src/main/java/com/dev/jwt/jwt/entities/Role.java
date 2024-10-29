@@ -92,6 +92,4 @@ public class Role {
         return true;
     }
 
-    
-
 }
