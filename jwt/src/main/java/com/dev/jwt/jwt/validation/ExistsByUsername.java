@@ -13,6 +13,7 @@ import jakarta.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface  ExistsByUsername {
 
+    /*Message error user in db */
     String message() default "{User exist in db}";
 
     Class<?>[] groups() default { };
