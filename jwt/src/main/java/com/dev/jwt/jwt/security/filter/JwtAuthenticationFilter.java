@@ -1,7 +1,5 @@
 package com.dev.jwt.jwt.security.filter;
 
-import static com.dev.jwt.jwt.security.TokenJwtConfig.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
@@ -16,6 +14,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.dev.jwt.jwt.security.TokenJwtConfig.CONTENT_TYPE;
+import static com.dev.jwt.jwt.security.TokenJwtConfig.HEADER_AUTHORIZATION;
+import static com.dev.jwt.jwt.security.TokenJwtConfig.PREFIX_TOKEN;
+import static com.dev.jwt.jwt.security.TokenJwtConfig.SECRET_KEY;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,8 +93,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         body.put("message", String.format("Has %s has iniciado sesion con exito", username));
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-        response.setContentType("application/json");
+        response.setContentType(CONTENT_TYPE);
         response.setStatus(200);
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException failed) throws IOException, ServletException {
+   
+    Map<String, String> body = new HashMap<>();
+    body.put("message", "Error en la authentication username o password incorrecto");
+    body.put("error", failed.getMessage());
+
+    response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+    response.setStatus(401);
+    response.setContentType(CONTENT_TYPE);
+
+    }
 }
