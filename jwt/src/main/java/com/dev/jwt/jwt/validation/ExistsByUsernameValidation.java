@@ -3,14 +3,16 @@ package com.dev.jwt.jwt.validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import com.dev.jwt.jwt.services.UserService;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
+/*fix problema with existsbyuserna,e */
 @Component
+@Configurable
 public class ExistsByUsernameValidation implements ConstraintValidator<ExistsByUsername, String> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExistsByUsernameValidation.class);
