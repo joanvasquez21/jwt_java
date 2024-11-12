@@ -1,11 +1,17 @@
 package com.dev.jwt.jwt.security.filter;
 
-import static com.dev.jwt.jwt.security.TokenJwtConfig.*;
-
 import java.io.IOException;
+import java.util.Collection;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import static com.dev.jwt.jwt.security.TokenJwtConfig.HEADER_AUTHORIZATION;
+import static com.dev.jwt.jwt.security.TokenJwtConfig.PREFIX_TOKEN;
+import static com.dev.jwt.jwt.security.TokenJwtConfig.SECRET_KEY;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,8 +46,19 @@ public class JwtValidationFilter  extends BasicAuthenticationFilter{
                                         .parseSignedClaims(token)
                                         .getPayload();
 
+                String username = claims.getSubject();
+                String username2 = (String) claims.get("username");
+
+                Object authoritiesClaims = claims.get("authorities");
+
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username2, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                chain.doFilter(request, response);
+                Collection<? extends GrantedAuthority> authorities = new ObjectMapper().readValue(authoritiesClaims);
+
+
                 }catch(Exception ex){
-                    ex.g
+                    ex.getMessage();
                 }
 
 
