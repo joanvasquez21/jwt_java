@@ -25,7 +25,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+//This class is to create the token
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     //Para decir que usuarios son autetenticos
@@ -96,9 +96,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, String> body = new HashMap<>();
         body.put("message", "Error en la autenticacion username o password incorrecto");
         body.put("error", failed.getMessage());
-        body.put(SPRING_SECURITY_FORM_PASSWORD_KEY, PREFIX_TOKEN)
-
-
+        body.put(SPRING_SECURITY_FORM_PASSWORD_KEY, PREFIX_TOKEN);
             }
 
 }
