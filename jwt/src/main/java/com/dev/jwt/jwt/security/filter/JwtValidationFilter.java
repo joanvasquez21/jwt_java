@@ -1,11 +1,9 @@
 package com.dev.jwt.jwt.security.filter;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -54,7 +52,7 @@ public class JwtValidationFilter  extends BasicAuthenticationFilter{
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username2, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 chain.doFilter(request, response);
-                Collection<? extends GrantedAuthority> authorities = new ObjectMapper().readValue(authoritiesClaims);
+               // Collection<? extends GrantedAuthority> authorities = new ObjectMapper().readValue(authoritiesClaims);
 
 
                 }catch(Exception ex){
