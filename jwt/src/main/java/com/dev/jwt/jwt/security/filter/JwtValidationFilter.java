@@ -44,7 +44,9 @@ public class JwtValidationFilter  extends BasicAuthenticationFilter{
                                         .parseSignedClaims(token)
                                         .getPayload();
 
+                //return the sub
                 String username = claims.getSubject();
+                //return the username
                 String username2 = (String) claims.get("username");
 
                 Object authoritiesClaims = claims.get("authorities");
