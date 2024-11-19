@@ -13,8 +13,11 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import static com.dev.jwt.jwt.security.TokenJwtConfig.HEADER_AUTHORIZATION;
 import static com.dev.jwt.jwt.security.TokenJwtConfig.PREFIX_TOKEN;
 import static com.dev.jwt.jwt.security.TokenJwtConfig.SECRET_KEY;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.lang.Arrays;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,16 +54,19 @@ public class JwtValidationFilter  extends BasicAuthenticationFilter{
                 //return the username
                 String username2 = (String) claims.get("username");
 
-                Object authoritiesClaims = claims.get("authorities");
+                    Object authoritiesClaims = claims.get("authorities");
 
-                //
-                Collection<? extends GrantedAuthority> authorities  = 
-                             new ObjectMapper().readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class);
-                //Procesar los roles
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username2, null,  authorities);
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    //Tenemos que convertir el object authoritiesClaims  en grantedauthority de tipo collection, tenemos que procesar los roles 
+             
+                    Collection<? extends GrantedAuthority> authorities = Arrays.asList(new ObjectMapper().readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
+
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username2, null, authorities);
+                //autenticamos
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                
+
+                //continuamos con la cadena de filtro
                 chain.doFilter(request, response);
-               // Collection<? extends GrantedAuthority> authorities = new ObjectMapper().readValue(authoritiesClaims);
 
 
                 }catch(Exception ex){
