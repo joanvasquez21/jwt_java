@@ -61,7 +61,8 @@ public class UserController {
             errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
         });
     
-        // Asegúrate de que errores se devuelven correctamente
+        // Asegúrate de que errores se devuelven correctamente 
+        //Aefg
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
